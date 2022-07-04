@@ -36,7 +36,7 @@
       </div>
       <div class="event_controller d-flex justify-content-between align-items-center">
         <div class="select_all">
-            <span class="select_btn">select all</span>
+            <!-- <span class="select_btn">select all</span> -->
         </div>
         <div class="clear_all">
             <!-- <span class="clear_btn">clear complete</span> -->

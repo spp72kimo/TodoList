@@ -84,13 +84,27 @@ function display_clear_all() {
   }
 
   if (count === 0) $(".clear_all").empty();
+}
+
+function display_select_all() {
+  var list = load_localStorage();
+  if (list.length === 0) $(".select_all").empty();
+
+  if (list.length > 0) {
+    var span = $("<span></span>");
+    span.addClass("select_btn");
+    span.text("Select all");
+    $(".select_all").empty();
+    $(".select_all").append(span);
+  }
 } // loading page...
 
 
 var list = load_localStorage();
 display();
 display_count_item();
-display_clear_all(); // add event
+display_clear_all();
+display_select_all(); // add event
 
 $("input[type=text]").keypress(function (e) {
   if (e.which === 13) {
@@ -115,6 +129,7 @@ $("input[type=text]").keypress(function (e) {
     window.localStorage.setItem("list", JSON.stringify(_list));
     id++;
     display_count_item(_list);
+    display_select_all();
   }
 }); // delete event, complete event
 
@@ -135,7 +150,8 @@ $(".list").click(function (e) {
 
     window.localStorage.setItem("list", JSON.stringify(_list2));
     $(e.target).parent("li").remove();
-    display_count_item(_list2);
+    display_count_item();
+    display_select_all();
   } // completed event
 
 
@@ -204,7 +220,7 @@ $(".view_control").click(function (e) {
       $(e.target).parent().siblings("li").children("span").removeClass("active");
     }
   }
-}); // clear completed
+}); // select all and clear all
 
 $(".event_controller").click(function (e) {
   //  clear all
@@ -232,7 +248,8 @@ $(".event_controller").click(function (e) {
 
     window.localStorage.setItem("list", JSON.stringify(_list6));
     display();
-    display_clear_all(_list6);
+    display_clear_all();
+    display_select_all();
   } // select all
 
 
@@ -248,6 +265,6 @@ $(".event_controller").click(function (e) {
 
     window.localStorage.setItem("list", JSON.stringify(_list7));
     display_count_item();
-    display_clear_all(_list7);
+    display_clear_all();
   }
 });
