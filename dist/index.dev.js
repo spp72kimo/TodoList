@@ -20,7 +20,8 @@ function load_localStorage() {
   return list;
 }
 
-function display(list) {
+function display() {
+  var list = load_localStorage();
   $(".list-group").empty();
 
   for (var i = 0; i < list.length; i++) {
@@ -66,7 +67,8 @@ function display_no_check(list) {
   }
 }
 
-function display_clear_all(list) {
+function display_clear_all() {
+  var list = load_localStorage();
   var count = 0;
 
   for (var i = 0; i < list.length; i++) {
@@ -82,16 +84,19 @@ function display_clear_all(list) {
   }
 
   if (count === 0) $(".clear_all").empty();
-}
+} // loading page...
+
 
 var list = load_localStorage();
-display(list);
-display_count_item(list);
-display_clear_all(list); // add event
+display();
+display_count_item();
+display_clear_all(); // add event
 
 $("input[type=text]").keypress(function (e) {
   if (e.which === 13) {
-    var id = list.length + 1;
+    var _list = load_localStorage();
+
+    var id = _list.length + 1;
     var event = e.target.value; // form validation
 
     if (event === "") return;
@@ -101,56 +106,62 @@ $("input[type=text]").keypress(function (e) {
     $(".list-group").append(li);
     $(e.target).val(""); // store into LocalStorage
 
-    list.push({
+    _list.push({
       id: id,
       complete: false,
       event: event
     });
-    window.localStorage.setItem("list", JSON.stringify(list));
+
+    window.localStorage.setItem("list", JSON.stringify(_list));
     id++;
-    display_count_item(list);
+    display_count_item(_list);
   }
 }); // delete event, complete event
 
 $(".list").click(function (e) {
   // delete event
   if ($(e.target).is(".cross")) {
+    var _list2 = load_localStorage();
+
     var id = $(e.target).parent().children(".content").children("input[name=id]").val();
 
-    for (var i = 0; i < list.length; i++) {
-      if (list[i].id == id) {
-        list.splice(i, 1);
+    for (var i = 0; i < _list2.length; i++) {
+      if (_list2[i].id == id) {
+        _list2.splice(i, 1);
+
         break;
       }
     }
 
-    window.localStorage.setItem("list", JSON.stringify(list));
+    window.localStorage.setItem("list", JSON.stringify(_list2));
     $(e.target).parent("li").remove();
-    display_count_item(list);
+    display_count_item(_list2);
   } // completed event
 
 
   if ($(e.target).is("input[type=checkbox]")) {
-    console.log("select here...");
+    var _list3 = load_localStorage();
+
     var span = $(e.target).siblings("span.event");
-    console.log(span);
     span.toggleClass("completed");
 
     var _id = span.siblings("input[name=id]").val();
 
+    console.log(_id);
+
     if (span.hasClass("completed")) {
-      for (var _i = 0; _i < list.length; _i++) {
-        if (list[_i].id == _id) list[_i].complete = true;
+      for (var _i = 0; _i < _list3.length; _i++) {
+        if (_list3[_i].id == _id) _list3[_i].complete = true;
       }
     } else {
-      for (var _i2 = 0; _i2 < list.length; _i2++) {
-        if (list[_i2].id == _id) list[_i2].complete = false;
+      for (var _i2 = 0; _i2 < _list3.length; _i2++) {
+        if (_list3[_i2].id == _id) _list3[_i2].complete = false;
       }
     }
 
-    window.localStorage.setItem("list", JSON.stringify(list));
+    window.localStorage.setItem("list", JSON.stringify(_list3));
     display_count_item();
-    display_clear_all(list);
+    display_clear_all(_list3);
   }
 }); // Tab_view_display
 
@@ -158,9 +169,7 @@ $(".view_control").click(function (e) {
   if ($(e.target).hasClass("active")) return;else {
     // diaply all items
     if ($(e.target).hasClass("view_all")) {
-      var _list = load_localStorage();
-
-      display(_list);
+      display();
       $(e.target).addClass("active");
       $(e.target).parent().siblings("li").children("span").removeClass("active");
     } // display active items
@@ -169,10 +178,10 @@ $(".view_control").click(function (e) {
     if ($(e.target).hasClass("view_active")) {
       var act_list = [];
 
-      var _list2 = load_localStorage();
+      var _list4 = load_localStorage();
 
-      for (var i = 0; i < _list2.length; i++) {
-        if (!_list2[i].complete) act_list.push(_list2[i]);
+      for (var i = 0; i < _list4.length; i++) {
+        if (!_list4[i].complete) act_list.push(_list4[i]);
       }
 
       display_no_check(act_list);
@@ -184,10 +193,10 @@ $(".view_control").click(function (e) {
     if ($(e.target).hasClass("view_complete")) {
       var complete_list = [];
 
-      var _list3 = load_localStorage();
+      var _list5 = load_localStorage();
 
-      for (var _i3 = 0; _i3 < _list3.length; _i3++) {
-        if (_list3[_i3].complete) complete_list.push(_list3[_i3]);
+      for (var _i3 = 0; _i3 < _list5.length; _i3++) {
+        if (_list5[_i3].complete) complete_list.push(_list5[_i3]);
       }
 
       display_no_check(complete_list);
@@ -202,18 +211,18 @@ $(".event_controller").click(function (e) {
   if ($(e.target).is(".clear_btn")) {
     var count = 0;
 
-    var _list4 = load_localStorage();
+    var _list6 = load_localStorage();
 
-    for (var i = 0; i < _list4.length; i++) {
-      if (_list4[i].complete) {
+    for (var i = 0; i < _list6.length; i++) {
+      if (_list6[i].complete) {
         count++;
       }
     }
 
     while (count > 0) {
-      for (var _i4 = 0; _i4 < _list4.length; _i4++) {
-        if (_list4[_i4].complete) {
-          _list4.splice(_i4, 1);
+      for (var _i4 = 0; _i4 < _list6.length; _i4++) {
+        if (_list6[_i4].complete) {
+          _list6.splice(_i4, 1);
 
           count--;
           break;
@@ -221,9 +230,9 @@ $(".event_controller").click(function (e) {
       }
     }
 
-    display(_list4);
-    display_clear_all(_list4);
-    window.localStorage.setItem("list", JSON.stringify(_list4));
+    window.localStorage.setItem("list", JSON.stringify(_list6));
+    display();
+    display_clear_all(_list6);
   } // select all
 
 
@@ -231,14 +240,14 @@ $(".event_controller").click(function (e) {
     $("input[type=checkbox]").prop("checked", true);
     $("span.event").addClass("completed");
 
-    var _list5 = load_localStorage();
+    var _list7 = load_localStorage();
 
-    for (var _i5 = 0; _i5 < _list5.length; _i5++) {
-      _list5[_i5].complete = true;
+    for (var _i5 = 0; _i5 < _list7.length; _i5++) {
+      _list7[_i5].complete = true;
     }
 
+    window.localStorage.setItem("list", JSON.stringify(_list7));
     display_count_item();
-    display_clear_all(_list5);
-    window.localStorage.setItem("list", JSON.stringify(_list5));
+    display_clear_all(_list7);
   }
 });

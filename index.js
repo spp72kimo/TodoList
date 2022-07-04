@@ -17,7 +17,8 @@ function load_localStorage() {
   return list;
 }
 
-function display(list) {
+function display() {
+  let list = load_localStorage();
   $(".list-group").empty();
   for (let i = 0; i < list.length; i++) {
     let { id, event, complete } = list[i];
@@ -67,7 +68,8 @@ function display_no_check(list) {
   }
 }
 
-function display_clear_all(list) {
+function display_clear_all() {
+  let list = load_localStorage();
   let count = 0;
   for (let i = 0; i < list.length; i++) {
     if (list[i].complete) {
@@ -83,14 +85,16 @@ function display_clear_all(list) {
   if (count === 0) $(".clear_all").empty();
 }
 
+// loading page...
 let list = load_localStorage();
-display(list);
-display_count_item(list);
-display_clear_all(list);
+display();
+display_count_item();
+display_clear_all();
 
 // add event
 $("input[type=text]").keypress(function (e) {
   if (e.which === 13) {
+    let list = load_localStorage();
     let id = list.length + 1;
     let event = e.target.value;
     // form validation
@@ -124,6 +128,7 @@ $("input[type=text]").keypress(function (e) {
 $(".list").click(function (e) {
   // delete event
   if ($(e.target).is(".cross")) {
+    let list = load_localStorage();
     let id = $(e.target)
       .parent()
       .children(".content")
@@ -142,12 +147,12 @@ $(".list").click(function (e) {
 
   // completed event
   if ($(e.target).is("input[type=checkbox]")) {
-    console.log("select here...");
+    let list = load_localStorage();
     let span = $(e.target).siblings("span.event");
-    console.log(span);
     span.toggleClass("completed");
 
     let id = span.siblings("input[name=id]").val();
+    console.log(id);
     if (span.hasClass("completed")) {
       for (let i = 0; i < list.length; i++) {
         if (list[i].id == id) list[i].complete = true;
@@ -169,8 +174,7 @@ $(".view_control").click(function (e) {
   else {
     // diaply all items
     if ($(e.target).hasClass("view_all")) {
-      let list = load_localStorage();
-      display(list);
+      display();
       $(e.target).addClass("active");
 
       $(e.target)
@@ -236,9 +240,10 @@ $(".event_controller").click(function (e) {
         }
       }
     }
-    display(list);
-    display_clear_all(list);
     window.localStorage.setItem("list", JSON.stringify(list));
+
+    display();
+    display_clear_all(list);
   }
 
   // select all
@@ -249,8 +254,8 @@ $(".event_controller").click(function (e) {
     for (let i = 0; i < list.length; i++) {
       list[i].complete = true;
     }
+    window.localStorage.setItem("list", JSON.stringify(list));
     display_count_item();
     display_clear_all(list);
-    window.localStorage.setItem("list", JSON.stringify(list));
   }
 });
